@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ProductsContainer,
   ProductWrapper,
@@ -11,8 +11,10 @@ import {
   ProductPrice,
   ProductButton
 } from './ProductsElements';
+import Modal from '../Modal/Modal'
 
 const Products = ({ heading, data }) => {
+  const [modalVisibility, setModalVisibility] = useState(false);
   return (
     <ProductsContainer>
       <ProductsHeading>{heading}</ProductsHeading>
@@ -25,11 +27,12 @@ const Products = ({ heading, data }) => {
                 <ProductTitle>{product.name}</ProductTitle>
                 <ProductDesc>{product.desc}</ProductDesc>
                 <ProductPrice>{product.price}</ProductPrice>
-                <ProductButton>{product.button}</ProductButton>
+                <ProductButton onClick={() => setModalVisibility(true)}>{product.button}</ProductButton>
               </ProductInfo>
             </ProductCard>
           );
         })}
+        <Modal modalVisibility={modalVisibility} setModalVisibility={setModalVisibility}/>
       </ProductWrapper>
     </ProductsContainer>
   );
