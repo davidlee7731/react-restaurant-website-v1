@@ -1,0 +1,5 @@
+{
+    "dbpass": "test",
+    "dbname": "Cluster0",
+    "PORT": 3002
+}

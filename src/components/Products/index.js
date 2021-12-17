@@ -11,8 +11,9 @@ import {
   ProductPrice,
   ProductButton
 } from './ProductsElements';
-// import { Modal } from '../Modal/Modal'
+import { Modal as Modall } from '../Modal/Modal'
 import styled from 'styled-components';
+
 
 const Container = styled.div`
   display: flex;
@@ -23,13 +24,18 @@ const Container = styled.div`
 
 
 const Products = ({ heading, data, modalVisibility, setModalVisibility }) => {
-  // const [modalVisibility, setModalVisibility] = useState(false);
+  const [addedItem, setAddedItem] = useState('');
+  const handleOnClick = (item) => {
+    setAddedItem(item);
+    setModalVisibility(prev => !prev);
+  }
   return (
-    <>{!modalVisibility ? (
-      <ProductsContainer>
-        <ProductsHeading>{heading}</ProductsHeading>
+    // <>{!modalVisibility ? (
+      <ProductsContainer >
+        <ProductsHeading>{!modalVisibility ? heading : addedItem}</ProductsHeading>
         <ProductWrapper>
-          {data.map((product, index) => {
+ 
+          {!modalVisibility ? data.map((product, index) => {
             return (
               <ProductCard key={index}>
                 <ProductImg src={product.img} alt={product.alt} />
@@ -37,18 +43,21 @@ const Products = ({ heading, data, modalVisibility, setModalVisibility }) => {
                   <ProductTitle>{product.name}</ProductTitle>
                   <ProductDesc>{product.desc}</ProductDesc>
                   <ProductPrice>{product.price}</ProductPrice>
-                  <ProductButton onClick={() => setModalVisibility(prev => !prev)}>{product.button}</ProductButton>
+                  <ProductButton onClick={() => handleOnClick(product.name)}>{product.button}</ProductButton>
                 </ProductInfo>
               </ProductCard>
             );
-          })}
-          {/* <Container>
-          <Modal modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} />
-        </Container> */}
+          }) : 
+          // <Container >
+          <Modall modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} addedItem={addedItem} setAddedItem={setAddedItem}/>
+        // </Container>
+        }
+
+          
+
         </ProductWrapper>
       </ProductsContainer>
-    ) : null}
-    </>
+    // ) : null}</>
   );
 };
 

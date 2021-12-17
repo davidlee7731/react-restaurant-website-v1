@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useSpring, animated } from 'react-spring';
 import styled from 'styled-components';
 import { MdClose } from 'react-icons/md';
@@ -58,14 +58,23 @@ const ModalImg = styled.img`
 const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  line-height: 1.8;
+  padding: 30px 40px;   
+  justify-content: top;
+  line-height: 1.5;
   color: #141414;
+  label {
+    align-items: left;
+    padding: 0px 10px
+  }
+  input {
+      margin-right: 10px;   
+  }
   p {
+    margin-left: 10px;
     margin-bottom: 1rem;
   }
   button {
+    margin-top: 1rem;
     padding: 10px 24px;
     background: #141414;
     color: #fff;
@@ -83,17 +92,48 @@ const CloseModalButton = styled(MdClose)`
   padding: 0;
   z-index: 10;
 `;
+const toppings = [{name: 'Extra Cheese', price: 1}, {name: 'Pepperoni', price: 2}];
 
-export const Modal = ({ modalVisibility, setModalVisibility }) => {
+export const Modal = ({ modalVisibility, setModalVisibility, addedItem, setAddedItem }) => {
     const modalRef = useRef();
+    const [checkedState, setCheckedState] = useState(
+        new Array(toppings.length).fill(false)
+      );
+    const [total, setTotal] = useState(0);
 
-    const animation = useSpring({
-        config: {
-            duration: 250
-        },
-        opacity: modalVisibility ? 1 : 0,
-        transform: modalVisibility ? `translateY(0%)` : `translateY(-100%)`
-    });
+    const handleOnChange = (position) => {
+        const updatedCheckedState = checkedState.map((item, index) => index === position ? !item : item);
+
+        setCheckedState(updatedCheckedState);
+        const data = {name: 'Supreme Pizza', description: 'test', price: '1', category: 'test'};
+        const totalPrice = updatedCheckedState.reduce(
+            (sum, currentState, index) => {
+                if (currentState === true) {
+                    fetch('http://localhost:3002/api', {method:'POST', headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },body: JSON.stringify(data)})
+                        .then(res => res.json())
+                        .then(data => console.log(data))
+                    return sum + toppings[index].price;
+                }
+                return sum;
+            }, 0);
+
+        setTotal(totalPrice);
+        // fetch('http://localhost:3002/api', {method:'POST'})
+        // .then(res => res.json())
+        // .then(data => console.log(data))
+    };
+
+      
+    // const animation = useSpring({
+    //     config: {
+    //         duration: 250
+    //     },
+    //     opacity: modalVisibility ? 1 : 0,
+    //     transform: modalVisibility ? `translateY(0%)` : `translateY(-100%)`
+    // });
 
     const closeModal = e => {
         if (modalRef.current === e.target) {
@@ -119,25 +159,45 @@ export const Modal = ({ modalVisibility, setModalVisibility }) => {
         [keyPress]
     );
 
+    const handleAddToCartClick = (item) => {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+        const body = JSON.stringify({
+            name: item
+        })
+        fetch('http://localhost:3002/api/cart', { method:'POST', headers, body })
+            .then(res => res.json())
+            .then(data => console.log(data))
+        setModalVisibility(false)
+        setAddedItem('')
+    }
     return (
         <>
             {modalVisibility ? (
-                // <Background onClick={closeModal} ref={modalRef}>hello
-                <animated.div style={animation}>
+                // <Background onClick={closeModal} ref={modalRef}>
+                // <animated.div style={animation}>
                     <ModalWrapper modalVisibility={modalVisibility}>
-                        <ModalImg src={require('./modal.jpg')} alt='camera' />
+                        {/* <ModalImg src={require('./modal.jpg')} alt='camera' /> */}
                         <ModalContent>
-                            <h1>Are you ready?</h1>
-                            <p>Get exclusive access to our next launch.</p>
-                            <button>Join Now</button>
+                            <h1>Add your toppings</h1>
+                            <p>Choose as many as you want!</p>
+                            {toppings.map(({name, price}, i) => (
+                                <label>
+                                <input type="checkbox" id={i} name={name} value={name} checked={checkedState[i]} onChange={() => handleOnChange(i)}/>
+                                {name}
+                              </label>
+                            ))}
+                            <button onClick={() => handleAddToCartClick(addedItem)}>Add to Cart</button>
                         </ModalContent>
                         <CloseModalButton
                             aria-label='Close modal'
                             onClick={() => setModalVisibility(prev => !prev)}
                         />
                     </ModalWrapper>
-                </animated.div>
-                /* </Background> */
+                // </animated.div>
+                // </Background> 
             ) : null}
         </>
     );
