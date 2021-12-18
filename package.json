@@ -19,6 +19,7 @@
     "react-scripts": "4.0.0",
     "react-spring": "^9.3.2",
     "react-tiny-fab": "^4.0.4",
+    "stripe": "^8.194.0",
     "styled-components": "^5.2.1",
     "web-vitals": "^0.2.4"
   },

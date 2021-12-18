@@ -18,7 +18,7 @@ const Splash = () => {
   };
 
   const scroll = () => window.scroll({
-    top: 850,
+    top: 900,
     left: 0,
     behavior: 'smooth'
   })

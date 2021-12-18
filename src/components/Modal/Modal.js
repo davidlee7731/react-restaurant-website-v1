@@ -92,29 +92,31 @@ const CloseModalButton = styled(MdClose)`
   padding: 0;
   z-index: 10;
 `;
-const toppings = [{name: 'Extra Cheese', price: 1}, {name: 'Pepperoni', price: 2}];
+const toppings = [{ name: 'Extra Cheese', price: 1 }, { name: 'Pepperoni', price: 2 }];
 
 export const Modal = ({ modalVisibility, setModalVisibility, addedItem, setAddedItem }) => {
     const modalRef = useRef();
     const [checkedState, setCheckedState] = useState(
         new Array(toppings.length).fill(false)
-      );
+    );
     const [total, setTotal] = useState(0);
 
     const handleOnChange = (position) => {
         const updatedCheckedState = checkedState.map((item, index) => index === position ? !item : item);
 
         setCheckedState(updatedCheckedState);
-        const data = {name: 'Supreme Pizza', description: 'test', price: '1', category: 'test'};
+        const data = { name: addedItem };
         const totalPrice = updatedCheckedState.reduce(
             (sum, currentState, index) => {
                 if (currentState === true) {
-                    fetch('http://localhost:3002/api', {method:'POST', headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },body: JSON.stringify(data)})
-                        .then(res => res.json())
-                        .then(data => console.log(data))
+                    // fetch('http://localhost:3002/api/cart', {
+                    //     method: 'POST', headers: {
+                    //         'Content-Type': 'application/json',
+                    //         'Accept': 'application/json'
+                    //     }, body: JSON.stringify(data)
+                    // })
+                    //     .then(res => res.json())
+                    //     .then(data => console.log(data))
                     return sum + toppings[index].price;
                 }
                 return sum;
@@ -126,7 +128,7 @@ export const Modal = ({ modalVisibility, setModalVisibility, addedItem, setAdded
         // .then(data => console.log(data))
     };
 
-      
+
     // const animation = useSpring({
     //     config: {
     //         duration: 250
@@ -167,7 +169,7 @@ export const Modal = ({ modalVisibility, setModalVisibility, addedItem, setAdded
         const body = JSON.stringify({
             name: item
         })
-        fetch('http://localhost:3002/api/cart', { method:'POST', headers, body })
+        fetch('http://localhost:3002/api/cart', { method: 'POST', headers, body })
             .then(res => res.json())
             .then(data => console.log(data))
         setModalVisibility(false)
@@ -178,24 +180,24 @@ export const Modal = ({ modalVisibility, setModalVisibility, addedItem, setAdded
             {modalVisibility ? (
                 // <Background onClick={closeModal} ref={modalRef}>
                 // <animated.div style={animation}>
-                    <ModalWrapper modalVisibility={modalVisibility}>
-                        {/* <ModalImg src={require('./modal.jpg')} alt='camera' /> */}
-                        <ModalContent>
-                            <h1>Add your toppings</h1>
-                            <p>Choose as many as you want!</p>
-                            {toppings.map(({name, price}, i) => (
-                                <label>
-                                <input type="checkbox" id={i} name={name} value={name} checked={checkedState[i]} onChange={() => handleOnChange(i)}/>
+                <ModalWrapper modalVisibility={modalVisibility}>
+                    {/* <ModalImg src={require('./modal.jpg')} alt='camera' /> */}
+                    <ModalContent>
+                        <h1>Add your toppings</h1>
+                        <p>Choose as many as you want!</p>
+                        {toppings.map(({ name, price }, i) => (
+                            <label>
+                                <input type="checkbox" id={i} name={name} value={name} checked={checkedState[i]} onChange={() => handleOnChange(i)} />
                                 {name}
-                              </label>
-                            ))}
-                            <button onClick={() => handleAddToCartClick(addedItem)}>Add to Cart</button>
-                        </ModalContent>
-                        <CloseModalButton
-                            aria-label='Close modal'
-                            onClick={() => setModalVisibility(prev => !prev)}
-                        />
-                    </ModalWrapper>
+                            </label>
+                        ))}
+                        <button onClick={() => handleAddToCartClick(addedItem)}>Add to Cart</button>
+                    </ModalContent>
+                    <CloseModalButton
+                        aria-label='Close modal'
+                        onClick={() => setModalVisibility(prev => !prev)}
+                    />
+                </ModalWrapper>
                 // </animated.div>
                 // </Background> 
             ) : null}

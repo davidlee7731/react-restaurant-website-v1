@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { GlobalStyle } from './globalStyles';
 import Splash from './components/Splash';
@@ -21,49 +21,95 @@ const Container = styled.div`
   height: 100vh;
 `;
 function CartIcon() {
-  return <img src={cart}  style={{ height: 32, width: 32 }}/>
+  return <img src={cart} style={{ height: 32, width: 32 }} />
 }
 
 function App() {
   const [modalVisibility, setModalVisibility] = useState(false);
   const [showCart, setShowCart] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+
+  const [cartItems, setCartItems] = useState([])
+  const [rawCartItems, setRawCartItems] = useState({});
+
   const handleCloseCart = () => setShowCart(false);
   const handleShowCart = () => setShowCart(true);
+  const handleOpenCheckout = () => {
+    setShowCart(false);
+    setShowCheckout(true);
+    console.log(rawCartItems)
+    fetch('http://localhost:3002/api/checkout', { method: 'POST', headers: { "Content-Type": "application/json" }, body: JSON.stringify(rawCartItems) })
+      .then(res => res.json())
+      .then(data => window.location = data.url)
+      .catch(err => {
+        console.log('hi')
+        console.error(err.error)
+      })
 
-  const cartContents = () => {
-    return fetch('http://localhost:3002/api/cart')
-    .then(res => res.json())
-    .then(data => data)
   }
- console.log(cartContents())
+  const handleCloseCheckout = () => setShowCheckout(false);
+
+
+  useEffect(() => {
+    fetch('http://localhost:3002/api/cart')
+      .then(res => res.json())
+      .then(data => {
+        setCartItems(Object.values(data));
+        setRawCartItems(data);
+      })
+  }, [cartItems])
+  // const cartContents = () => {
+  //   return fetch('http://localhost:3002/api/cart')
+  //   .then(res => res.json())
+  //   .then(data => data)
+  // }
+  // console.log(cartContents())
   return (
     <Router>
       <GlobalStyle />
       <Splash />
       <Products heading='Choose your favorite' data={productData} modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} />
       {/* <Container> */}
-        {/* <Modal modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} /> */}
+      {/* <Modal modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} /> */}
       {/* </Container> */}
       <Feature />
       <Products heading='Sweet Treats for You' data={productDataTwo} />
       <Modal show={showCart} onHide={handleCloseCart} size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered>
+        aria-labelledby="contained-modal-title-vcenter"
+        centered>
         <Modal.Header >
           <Modal.Title>Your Cart</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{typeof cartContents()}</Modal.Body>
+        <Modal.Body>{cartItems.map((item, i) => <div key={i}>1x {item}</div>)}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseCart}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleCloseCart}>
+          <Button variant="primary" onClick={handleOpenCheckout}>
             Checkout
-          </Button> 
+          </Button>
         </Modal.Footer>
       </Modal>
+      {/* checkout modal below*/}
+      <Modal show={showCheckout} onHide={handleCloseCheckout} size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered>
+        <Modal.Header >
+          <Modal.Title>Redirecting to Stripe Checkout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Please do not press the Back button of your browser</Modal.Body>
+        <Modal.Footer>
+          {/* <Button variant="secondary" onClick={handleCloseCheckout}>
+            Close
+          </Button> */}
+          {/* <Button variant="primary" onClick={handleCloseCart}>
+            Checkout
+          </Button> */}
+        </Modal.Footer>
+      </Modal>
+
       <Footer />
-      <Fab icon={<CartIcon/>} mainButtonStyles={{backgroundColor:'#e31837'}} onClick={handleShowCart}> </Fab>
+      <Fab icon={<CartIcon />} mainButtonStyles={{ backgroundColor: '#e31837' }} onClick={handleShowCart}> </Fab>
 
     </Router>
   );

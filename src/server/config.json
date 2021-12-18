@@ -1,5 +1,8 @@
 {
     "dbpass": "test",
     "dbname": "Cluster0",
-    "PORT": 3002
+    "PORT": 3002,
+    "stripeKey": "sk_test_B2KxRCytQgjihvmD2qH7MWMM",
+    "success_url": "http://localhost:3002/success",
+    "cancel_url": "http://localhost:3002/cancel"
 }
