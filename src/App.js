@@ -21,7 +21,7 @@ const Container = styled.div`
   height: 100vh;
 `;
 function CartIcon() {
-  return <img src={cart} style={{ height: 32, width: 32 }} />
+  return <img src={cart} style={{ height: 45, width: 45 }} />
 }
 
 function App() {
@@ -29,7 +29,7 @@ function App() {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
 
-  const [cartItems, setCartItems] = useState([])
+  const [cartItems, setCartItems] = useState(true)
   const [rawCartItems, setRawCartItems] = useState({});
 
   const handleCloseCart = () => setShowCart(false);
@@ -37,7 +37,7 @@ function App() {
   const handleOpenCheckout = () => {
     setShowCart(false);
     setShowCheckout(true);
-    console.log(rawCartItems)
+    // console.log(rawCartItems)
     fetch('http://localhost:3002/api/checkout', { method: 'POST', headers: { "Content-Type": "application/json" }, body: JSON.stringify(rawCartItems) })
       .then(res => res.json())
       .then(data => window.location = data.url)
@@ -54,7 +54,11 @@ function App() {
     fetch('http://localhost:3002/api/cart')
       .then(res => res.json())
       .then(data => {
-        setCartItems(Object.values(data));
+        console.log('useEffect', data)
+        // setCartItems(Object.values(data));
+        console.log('rawCartItems in useEffect', rawCartItems)
+        setTimeout(500, () => console.log('waited 500'))
+        setCartItems(!cartItems)
         setRawCartItems(data);
       })
   }, [cartItems])
@@ -68,7 +72,7 @@ function App() {
     <Router>
       <GlobalStyle />
       <Splash />
-      <Products heading='Choose your favorite' data={productData} modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} />
+      <Products heading='Choose your favorite' data={productData} modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} cartItems={cartItems} setCartItems={setCartItems} />
       {/* <Container> */}
       {/* <Modal modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} /> */}
       {/* </Container> */}
@@ -80,7 +84,7 @@ function App() {
         <Modal.Header >
           <Modal.Title>Your Cart</Modal.Title>
         </Modal.Header>
-        <Modal.Body>{cartItems.map((item, i) => <div key={i}>1x {item}</div>)}</Modal.Body>
+        <Modal.Body>{Object.values(rawCartItems).map(({ name, price }, i) => <div key={i} style={{ 'marginLeft': '50px', }}>1x {name}<span style={{ 'marginLeft': '150px', }}>{(price / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</span></div>)}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseCart}>
             Close
@@ -109,7 +113,9 @@ function App() {
       </Modal>
 
       <Footer />
-      <Fab icon={<CartIcon />} mainButtonStyles={{ backgroundColor: '#e31837' }} onClick={handleShowCart}> </Fab>
+      <Fab icon={<CartIcon />} mainButtonStyles={{
+        backgroundColor: '#e31837', width: '100px', height: '100px'
+      }} onClick={handleShowCart}> </Fab>
 
     </Router>
   );

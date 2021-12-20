@@ -63,10 +63,11 @@ module.exports = {
     // console.log(cart[0])
     // console.log(items)
     const cartWithFoodNames = [];
-
+    // setTimeout(() => console.log("World!"), 5000);
     for (let i = 0; i < items.length; i++) {
-      const findFood = await Food.findById(items[i])
-      cartWithFoodNames.push(findFood.name)
+      const { name, price } = await Food.findById(items[i])
+      // console.log(name, price)
+      cartWithFoodNames.push({ name, price })
     }
 
     // const cartWithFoodNames = cart[0].items.reduce(async (acc, foodId, i) => {
@@ -79,6 +80,7 @@ module.exports = {
     //   // await acc;
     //   return await acc
     // }, [])
+    // console.log(cartWithFoodNames)
     res.locals.cart = cartWithFoodNames;
     return next();
   },

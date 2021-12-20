@@ -29,8 +29,8 @@ const Splash = () => {
       <Sidebar isOpen={isOpen} toggle={toggle} />
       <SplashContent>
         <SplashItems>
-          <SplashH1>Greatest Pizza Ever</SplashH1>
-          <SplashP>Ready in 60 seconds</SplashP>
+          <SplashH1>Order Pizza Now</SplashH1>
+          <SplashP>Ready in 30 Minutes</SplashP>
           <SplashBtn onClick={scroll}>Place Order</SplashBtn>
         </SplashItems>
       </SplashContent>

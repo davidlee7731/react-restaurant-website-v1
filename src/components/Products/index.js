@@ -23,7 +23,7 @@ const Container = styled.div`
 `;
 
 
-const Products = ({ heading, data, modalVisibility, setModalVisibility }) => {
+const Products = ({ heading, data, modalVisibility, setModalVisibility, cartItems, setCartItems }) => {
   const [addedItem, setAddedItem] = useState('');
   const handleOnClick = (item) => {
     setAddedItem(item);
@@ -31,32 +31,32 @@ const Products = ({ heading, data, modalVisibility, setModalVisibility }) => {
   }
   return (
     // <>{!modalVisibility ? (
-      <ProductsContainer >
-        <ProductsHeading>{!modalVisibility ? heading : addedItem}</ProductsHeading>
-        <ProductWrapper>
- 
-          {!modalVisibility ? data.map((product, index) => {
-            return (
-              <ProductCard key={index}>
-                <ProductImg src={product.img} alt={product.alt} />
-                <ProductInfo>
-                  <ProductTitle>{product.name}</ProductTitle>
-                  <ProductDesc>{product.desc}</ProductDesc>
-                  <ProductPrice>{product.price}</ProductPrice>
-                  <ProductButton onClick={() => handleOnClick(product.name)}>{product.button}</ProductButton>
-                </ProductInfo>
-              </ProductCard>
-            );
-          }) : 
+    <ProductsContainer >
+      <ProductsHeading>{!modalVisibility ? heading : addedItem.name}</ProductsHeading>
+      <ProductWrapper>
+
+        {!modalVisibility ? data.map((product, index) => {
+          return (
+            <ProductCard key={index}>
+              <ProductImg src={product.img} alt={product.alt} />
+              <ProductInfo>
+                <ProductTitle>{product.name}</ProductTitle>
+                <ProductDesc>{product.desc}</ProductDesc>
+                <ProductPrice>{product.price}</ProductPrice>
+                <ProductButton onClick={() => handleOnClick(product)}>{product.button}</ProductButton>
+              </ProductInfo>
+            </ProductCard>
+          );
+        }) :
           // <Container >
-          <Modall modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} addedItem={addedItem} setAddedItem={setAddedItem}/>
-        // </Container>
+          <Modall modalVisibility={modalVisibility} setModalVisibility={setModalVisibility} addedItem={addedItem} setAddedItem={setAddedItem} cartItems={cartItems} setCartItems={setCartItems} />
+          // </Container>
         }
 
-          
 
-        </ProductWrapper>
-      </ProductsContainer>
+
+      </ProductWrapper>
+    </ProductsContainer>
     // ) : null}</>
   );
 };
